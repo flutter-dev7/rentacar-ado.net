@@ -45,7 +45,7 @@ public class RentalService : IRentalService
                 SELECT * FROM Rentals
                 WHERE Id = @id";
 
-                var rental = await connection.QuerySingleOrDefaultAsync(sql, new { id });
+                var rental = await connection.QuerySingleOrDefaultAsync<Rental>(sql, new { id });
 
                 return rental;
             }
@@ -57,7 +57,7 @@ public class RentalService : IRentalService
         }
     }
 
-    public async Task AddRental(Rental rental)
+    public async Task AddRentalAsync(Rental rental)
     {
         try
         {
@@ -66,10 +66,17 @@ public class RentalService : IRentalService
                 connection.Open();
 
                 string sql = @"
-                SELECT * FROM Rentals (CarId, CustomerId, StartDate, EndDate, TotalCost)
+                INSERT INTO Rentals (CarId, CustomerId, StartDate, EndDate, TotalCost)
                 VALUES (@carid, @customerid, @startdate, @enddate, @totalcost)";
 
-                await connection.ExecuteAsync(sql);
+                await connection.ExecuteAsync(sql, new
+                {
+                    rental.CarId,
+                    rental.CustomerId,
+                    StartDate = rental.StartDate.ToDateTime(TimeOnly.MinValue),
+                    EndDate = rental.EndDate.ToDateTime(TimeOnly.MinValue),
+                    rental.TotalCost
+                });
             }
         }
         catch (System.Exception ex)
@@ -79,7 +86,7 @@ public class RentalService : IRentalService
         }
     }
 
-    public async Task UpdateRental(Rental rental)
+    public async Task UpdateRentalAsync(Rental rental)
     {
         try
         {
@@ -96,7 +103,15 @@ public class RentalService : IRentalService
                 TotalCost = @totalcost
                 WHERE Id = @id";
 
-                await connection.ExecuteAsync(sql, rental);
+                await connection.ExecuteAsync(sql, new
+                {
+                    rental.Id,
+                    rental.CarId,
+                    rental.CustomerId,
+                    StartDate = rental.StartDate.ToDateTime(TimeOnly.MinValue),
+                    EndDate = rental.EndDate.ToDateTime(TimeOnly.MinValue),
+                    rental.TotalCost
+                });
             }
         }
         catch (System.Exception ex)
@@ -106,7 +121,7 @@ public class RentalService : IRentalService
         }
     }
 
-    public async Task DeleteRental(int id)
+    public async Task DeleteRentalAsync(int id)
     {
         try
         {

@@ -45,7 +45,7 @@ public class CustomerService : ICustomerService
                 SELECT * FROM Customers
                 WHERE Id = @id";
 
-                var customer = await connection.QuerySingleOrDefaultAsync(sql, new { id });
+                var customer = await connection.QuerySingleOrDefaultAsync<Customer>(sql, new { id });
 
                 return customer;
             }
@@ -57,7 +57,7 @@ public class CustomerService : ICustomerService
         }
     }
 
-    public async Task AddCustomer(Customer customer)
+    public async Task AddCustomerAsync(Customer customer)
     {
         try
         {
@@ -67,7 +67,7 @@ public class CustomerService : ICustomerService
 
                 string sql = @"
                 INSERT INTO Customers (FullName, Phone, Email)
-                VALUES (@fullname, phone, email)";
+                VALUES (@fullname, @phone, @email)";
 
                 await connection.ExecuteAsync(sql, customer);
             }
@@ -79,7 +79,7 @@ public class CustomerService : ICustomerService
         }
     }
 
-    public async Task UpdateCustomer(Customer customer)
+    public async Task UpdateCustomerAsync(Customer customer)
     {
         try
         {
@@ -104,7 +104,7 @@ public class CustomerService : ICustomerService
         }
     }
 
-    public async Task DeleteCustomer(int id)
+    public async Task DeleteCustomerAsync(int id)
     {
         try
         {

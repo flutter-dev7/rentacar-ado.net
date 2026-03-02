@@ -7,7 +7,7 @@ public interface IRentalService
 {
     Task<List<Rental>> GetAllRentalsAsync();
     Task<Rental?> GetRentalByIdAsync(int id);
-    Task AddRental(Rental rental);
-    Task UpdateRental(Rental rental);
-    Task DeleteRental(int id);
+    Task AddRentalAsync(Rental rental);
+    Task UpdateRentalAsync(Rental rental);
+    Task DeleteRentalAsync(int id);
 }
